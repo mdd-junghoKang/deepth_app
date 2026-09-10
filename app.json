@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "deepth_layout",
+    "slug": "deepth_layout",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSBluetoothPeripheralUsageDescription": "이 앱은 BLE 기기(눈 마사지기)와 연결하고 펌웨어를 전송하기 위해 블루투스를 사용합니다."
+      }
+    },
+    "android": {
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "react-native-ble-plx",
+        {
+          "isBackgroundEnabled": false,
+          "modes": ["central"],
+          "bluetoothAlwaysPermission": "이 앱은 BLE 기기(눈 마사지기)와 연결하고 펌웨어를 전송하기 위해 블루투스를 사용합니다."
+        }
+      ]
+    ]
+  }
+}

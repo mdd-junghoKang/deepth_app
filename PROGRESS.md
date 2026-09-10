@@ -1,0 +1,69 @@
+# 작업 기록
+
+**결론: 이 문서는 이 프로젝트에서 지금까지 무엇을 했고, 왜 그렇게 했고, 다음에 뭘 할 계획인지를 시간 순서대로 기록하는 "작업 일지"입니다.** 각 항목의 자세한 내용은 관련 문서를 같이 표시해뒀으니 참고하세요.
+
+## 지금까지 완료한 작업
+
+| 작업 | 내용 | 자세한 내용 |
+|---|---|---|
+| React Native(Expo) 프로젝트 생성 | 앱을 만들 수 있는 기본 뼈대를 만듦 | `AUTO_GENERATED.md` |
+| Dev Client / EAS Build 세팅 | 블루투스 같은 특수 기능을 테스트할 수 있도록, 일반 Expo Go 대신 우리 전용 테스트 앱을 클라우드에서 빌드하도록 세팅 | `SETUP.md` 1~2번 |
+| BLE 통신 라이브러리 설치 | 기기 조작(모드 변경, 온도 확인 등)을 위한 `react-native-ble-plx` 설치 | `SETUP.md` 3번 |
+| 펌웨어 업데이트(OTA) 라이브러리 조사 및 결정 | 기기 칩셋(Nordic) 확인 후, 여러 후보를 비교해서 `@getquip/expo-nordic-dfu` 채택 | `SETUP.md` 3번, `ble_ota_guide.md` |
+| 기기 제어 프로토콜 정리 | 하드웨어팀이 준 엑셀 파일(`deepth_info/20240125_Protocol.xlsx`)의 기기 조작 항목을 표로 정리 | `ble_ota_guide.md` 4번 |
+| 사업계획서·아키텍처 문서 분석 | 사업계획서와 시스템 구성도를 확인해서, OTA가 백엔드의 정식 기능(Canary 배포·롤백)이라는 것과 Multi-SKU(여러 기기 종류) 대응이 필요하다는 것을 확인 | `ble_ota_guide.md` 2번, 6번 |
+| 문서 작성 규칙 수립 | "초보자도 이해할 수 있게, 결론부터, 표로 정리"하는 규칙을 정해서 `AGENTS.md`에 등록 | `AGENTS.md` |
+| 문서 3종 정리 | 위 규칙에 맞춰 `AUTO_GENERATED.md`(자동 생성 내용) / `SETUP.md`(직접 결정한 내용) / `ble_ota_guide.md`(OTA 구현 방법)로 문서를 분리 | 각 파일 |
+| 코드 폴더 구조(`src`) 생성 | 화면·기능이 늘어날 것을 대비해 기본 폴더 틀을 만듦 (바로 아래 표 참고) | 이 문서 |
+| 대시보드·디바이스 관리 UI/UX 설계 | ChatGPT로 검토받은 요구사항을 참고해서 하단 탭 구성(홈/기기/설정), 대시보드·디바이스 관리·기기 등록 흐름의 화면 구조를 확정 | `UI_UX_DESIGN.md` |
+| 디자인 원칙 문서화 | "요구사항을 그대로 따르지 않고 UX 관점에서 판단해서 제안한다"는 원칙을 `AGENTS.md`(짧은 규칙)와 `UI_UX_DESIGN.md`(근거·예시)에 나눠서 기록 | `AGENTS.md`, `UI_UX_DESIGN.md` 0번 |
+| 레퍼런스 이미지 반영 | AI로 생성한 대시보드·디바이스 관리 목업 이미지(`assets/references/image1.png`)를 보고 실제 색감·카드 스타일·카피 톤을 디자인 톤 섹션에 구체적인 값으로 반영 | `UI_UX_DESIGN.md` 8번 |
+| 디자인 방향 최종 확정 | "따뜻한 크림 톤" vs "다크+민트 프리미엄 테크" 두 방향을 비교 검토한 뒤, 브랜드 성격(정밀 트래킹보다 셀프케어에 가까움)에 맞춰 크림 톤으로 확정. 버튼 색 불일치·이벤트 배너 톤 문제도 반영된 최신 레퍼런스(`image2.png`, `image3.png`)로 정리 | `UI_UX_DESIGN.md` 8번 |
+| 코딩 컨벤션·기술 스택 확정 | 내비게이션(React Navigation), 상태관리(Zustand), UI 키트(NativeWind + react-native-reusables 선택적 사용), BLE 폴더 구조, OTA 안전장치 정책(재연결/백그라운드 처리)을 확정하고 `AGENTS.md`에 정리 | `AGENTS.md` |
+| React Navigation·Zustand 설치 | `@react-navigation/native`, `native-stack`, `bottom-tabs`와 필수 의존성(`react-native-screens`, `react-native-safe-area-context`), `zustand` 설치 완료 | `package.json` |
+
+## src 폴더 구조
+
+지금은 폴더만 만들어둔 빈 상태(뼈대)이고, 실제 화면/기능 코드는 앞으로 하나씩 채워나갈 예정입니다.
+
+| 폴더 | 무엇을 넣을 예정인가 |
+|---|---|
+| `src/screens` | 대시보드, 디바이스 관리처럼 화면 단위 코드 |
+| `src/components` | 여러 화면에서 재사용하는 버튼, 카드 같은 작은 UI 조각 |
+| `src/hooks` | BLE 연결 상태 관리처럼 재사용 가능한 로직 |
+| `src/services` | 백엔드 API 호출, BLE 통신 로직 |
+| `src/navigation` | 화면 간 이동(탭, 스택) 설정 |
+| `src/types` | 타입스크립트 타입 정의 |
+
+## 확인이 필요해서 남겨둔 것 (하드웨어팀 등에 문의 예정)
+
+| 항목 | 상태 |
+|---|---|
+| "B-3700" 모듈이 실제로 Nordic 칩을 내장했는지 | 미확인 |
+| 기기 제어 프로토콜(`0xDEE0`)의 완전한 형태(128bit UUID) | 미확인 |
+| 기기가 Nordic 표준 업데이트 절차(DFU)를 지원하는지, 재시작 방식 | 미확인 |
+
+## 다음 계획
+
+| 순서 | 할 일 |
+|---|---|
+| 1 | `npx @react-native-reusables/cli@latest init` 실행 (대화형 마법사라 사람이 직접 — 아래 "지금 사람이 해야 하는 것" 참고) |
+| 2 | `UI_UX_DESIGN.md`에서 정한 기기 프로필 데이터 구조부터 설계 (A2/A3 등 기기 종류별 제어 항목을 데이터로 관리하기 위함) |
+| 3 | `src/screens`, `src/navigation`에 대시보드 → 디바이스 관리 → 기기 등록 화면과 이동 구조 구현 |
+| 4 | `SETUP.md`에 남은 EAS 로그인·빌드 진행 (사람이 직접) |
+| 5 | 실기기로 BLE 연결 및 펌웨어 업데이트 테스트 |
+| 6 | 실제 출시 전, 안드로이드용 adaptive icon(전경/배경 이미지)을 새로 준비해서 `app.json`에 다시 등록 (기존 기본 아이콘 파일은 안 쓰기로 하고 삭제함) |
+
+## 지금 사람이 해야 하는 것
+
+`react-native-reusables`를 세팅하는 명령어는 방향키로 선택하는 대화형 마법사라 AI가 대신 실행할 수 없습니다. 아래 순서로 직접 진행해주세요.
+
+```bash
+npx @react-native-reusables/cli@latest init
+```
+
+- "A project already exists in this directory" 안내가 뜨면 **"Initialize a new project here anyway"** 선택
+- 스타일링 라이브러리를 고르라고 하면 **NativeWind** 선택
+- 나머지는 기본값(자동 추천)으로 진행하면 됩니다
+
+다 끝나면 저한테 "끝났다"고 알려주시면, 생성된 설정 파일들을 확인하고 나머지 화면 작업에 이어서 반영하겠습니다.
