@@ -24,6 +24,8 @@
 | NativeWind/react-native-reusables 실제 세팅 및 검증 | 설정 파일을 수동 구성하고, 누락됐던 필수 의존성(`babel-preset-expo`, `react-native-reanimated`, `react-native-worklets`)을 찾아 설치, 실제 번들링까지 확인 | `PROGRESS.md`(이 문서) |
 | 문서 폴더 정리 | `AGENTS.md`/`CLAUDE.md`만 루트에 남기고 나머지 문서 5개를 `docs/`로 이동 | `AGENTS.md` |
 | 최종 색상 코드 반영 | 레퍼런스 이미지(`image2.png`, `image3.png`)의 실제 픽셀 값을 추출해서 `global.css`, `tailwind.config.js`에 정확한 색상 코드로 반영, 번들링까지 재검증 | `UI_UX_DESIGN.md` 8번 |
+| 기기 프로필 데이터 구조 설계 | "기기 종류(SKU)가 지원하는 기능"(`DeviceProfile`)과 "실제 등록된 기기 한 대의 상태"(`Device`)를 분리한 타입을 정의하고, A2의 실제 프로토콜 값으로 카탈로그 작성 | `src/types/device.ts`, `src/services/ble/deviceProfiles.ts` |
+| 대시보드·디바이스 관리 화면 구현 | 하단 탭 내비게이션(홈/기기/설정)과 두 화면을 실제 컴포넌트로 구현. 아직 BLE 연동 전이라 Zustand 스토어에 목업 기기 데이터 2개를 넣어서 화면을 확인할 수 있게 함. `npx expo export`로 번들링(3,181개 모듈) 확인 | `src/navigation/RootNavigator.tsx`, `src/screens/`, `src/store/deviceStore.ts` |
 
 ## src 폴더 구조
 
@@ -45,16 +47,16 @@
 | "B-3700" 모듈이 실제로 Nordic 칩을 내장했는지 | 미확인 |
 | 기기 제어 프로토콜(`0xDEE0`)의 완전한 형태(128bit UUID) | 미확인 |
 | 기기가 Nordic 표준 업데이트 절차(DFU)를 지원하는지, 재시작 방식 | 미확인 |
+| 기압모드(0xDF62)·진동모드(0xDF63)의 실제 단계 수 — 원본 문서에 범위(0-3, 0-2)와 설명(4단계)이 서로 안 맞음 | 미확인 (일단 4단계로 가정하고 진행) |
 
 ## 다음 계획
 
 | 순서 | 할 일 |
 |---|---|
-| 1 | `UI_UX_DESIGN.md`에서 정한 기기 프로필 데이터 구조부터 설계 (A2/A3 등 기기 종류별 제어 항목을 데이터로 관리하기 위함) |
-| 2 | `src/screens`, `src/navigation`에 대시보드 → 디바이스 관리 → 기기 등록 화면과 이동 구조 구현 |
-| 3 | `SETUP.md`에 남은 EAS 로그인·빌드 진행 (사람이 직접, 다른 항목과 순서 무관하게 진행 가능) |
-| 4 | 실기기로 BLE 연결 및 펌웨어 업데이트 테스트 |
-| 5 | 실제 출시 전, 안드로이드용 adaptive icon(전경/배경 이미지)을 새로 준비해서 `app.json`에 다시 등록 (기존 기본 아이콘 파일은 안 쓰기로 하고 삭제함) |
+| 1 | 기기 등록(BLE 스캔) 흐름 화면 구현 — 지금은 "새로운 기기 등록" 버튼이 눌러도 아무 동작 안 함 |
+| 2 | `SETUP.md`에 남은 EAS 로그인·빌드 진행 (사람이 직접, 다른 항목과 순서 무관하게 진행 가능 — `eas init`까지는 진행된 것으로 보임) |
+| 3 | 실기기로 BLE 연결 및 펌웨어 업데이트 테스트 (목업 데이터를 실제 BLE 데이터로 교체) |
+| 4 | 실제 출시 전, 안드로이드용 adaptive icon(전경/배경 이미지)을 새로 준비해서 `app.json`에 다시 등록 (기존 기본 아이콘 파일은 안 쓰기로 하고 삭제함) |
 
 ## NativeWind / react-native-reusables 세팅 경위 (참고용)
 
