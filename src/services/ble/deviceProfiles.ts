@@ -7,6 +7,7 @@ export const DEVICE_PROFILES: Record<string, DeviceProfile> = {
   A2: {
     sku: 'A2',
     category: '눈마사지기',
+    image: require('../../../assets/deepth_device.png'),
     modes: [
       { id: 1, name: '순환 테라피', description: '지압 마사지와 온열 마사지가 진행됩니다.' },
       { id: 2, name: '집중력 테라피', description: '지압 마사지만 단독으로 진행됩니다.' },

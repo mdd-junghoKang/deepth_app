@@ -33,9 +33,11 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 - 기존 코드 스타일과 다른 새로운 패턴을 쓰기 전엔 먼저 물어보세요.
 - 에러가 나면 원인과 고친 이유를 짧게 설명하세요. 그냥 "고쳤습니다"로 끝내지 마세요.
 - 작업하다가 화면 레이아웃/스타일 참고용 레퍼런스 이미지가 필요해지면, 직접 만들려 하지 말고 사용자에게 요청하세요. 이때 어떤 이미지가 왜 필요한지와 함께, 그 이미지를 생성할 수 있는 프롬프트를 같이 전달하세요.
+- 코드가 아니라 대화형 명령어(`eas build` 등)를 실행하다가 나온 결정(앱 ID, 키스토어 방식 등)도 파일 변경만큼 중요할 수 있습니다. 특히 나중에 되돌리기 어려운 결정이면, 그 자리에서 바로 관련 문서(`SETUP.md`, `PROGRESS.md`)에 기록하세요. "코드를 안 건드렸으니 기록 안 해도 된다"고 넘어가지 마세요.
 
 ## 4. BLE / OTA 관련 참고사항
 
+- **OTA는 지금 만들 필요 없음**: 고객사·개발사 확정 사항(2026-09-10)으로, A2에는 OTA를 적용하지 않고 OTA는 A3 기종에만 적용합니다. A3 기판은 10월 말 이후 입고 예정이라 그 전까지 OTA 관련 화면/기능을 우선순위에 넣지 마세요. 자세한 내용은 `docs/ble_ota_guide.md` 맨 위 참고.
 - BLE 통신 관련 UUID, 명령어 스펙은 `docs/ble_ota_guide.md`(정리된 가이드)와 `deepth_info/20240125_Protocol.xlsx`(하드웨어팀 원본 문서)를 그대로 따릅니다. 임의로 값을 바꾸지 마세요.
 - 칩셋: Nordic 계열이라고 확인은 됐지만(대표 구두 확인), 실제 회로의 "B-3700" 모듈이 Nordic이 맞는지는 문서로 검증되지 않았습니다. 이 부분이 확정되기 전까지는 "Nordic이라고 가정하고 진행 중"이라는 점을 감안하세요.
 - OTA 라이브러리: `@getquip/expo-nordic-dfu`. `expo`의 공식 지원 버전(peer dependency)이 이 프로젝트보다 낮아 `--legacy-peer-deps`로 설치돼 있습니다 (`.npmrc` 참고). 실기기 검증 전까지는 완전히 신뢰하지 마세요.
@@ -59,6 +61,7 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 src/
   screens/          # 화면 단위 컴포넌트
   components/       # 재사용 UI 컴포넌트 (react-native-reusables로 가져온 것 + 직접 만든 것)
+    icons/          # Lucide에 없는 자사 전용 커스텀 SVG 아이콘 (assets/*.svg 원본을 옮긴 것)
   navigation/        # 화면 이동(탭/스택) 설정
   services/
     ble/            # BLE 연결, OTA 관련 로직

@@ -20,7 +20,8 @@
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE",
         "android.permission.BLUETOOTH_CONNECT"
-      ]
+      ],
+      "package": "kr.mdd.deepthsmart"
     },
     "web": {
       "favicon": "./assets/favicon.png"

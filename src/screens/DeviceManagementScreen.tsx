@@ -1,4 +1,5 @@
-import { FlatList, Pressable, View } from 'react-native';
+import { FlatList, Image, Pressable, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronRight, Plus } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ export function DeviceManagementScreen() {
   const devices = useDeviceStore((s) => s.devices);
 
   return (
-    <View className="flex-1 gap-4 bg-background p-4">
+    <SafeAreaView edges={['top']} className="flex-1 gap-5 bg-background p-5">
       <Text variant="h3">내 디바이스 ({devices.length})</Text>
 
       {devices.length === 0 ? (
@@ -30,7 +31,7 @@ export function DeviceManagementScreen() {
         <Icon as={Plus} size={18} />
         <Text>새로운 기기 등록</Text>
       </Button>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -41,13 +42,16 @@ function DeviceCard({ device }: { device: Device }) {
   const lastUsedLabel = device.lastUsedAt ? formatLastUsed(device.lastUsedAt) : '사용 기록 없음';
 
   return (
-    <Pressable className="gap-2 rounded-2xl bg-card p-4">
-      <View className="flex-row items-center justify-between">
-        <View>
-          <Text className="font-semibold">{device.nickname}</Text>
-          <Text variant="muted" className="text-xs">
-            {profile?.category ?? device.sku} · {device.sku}
-          </Text>
+    <Pressable className="gap-3 rounded-2xl bg-card p-5">
+      <View className="flex-row items-center justify-between gap-3">
+        <View className="flex-row flex-1 items-center gap-3">
+          {profile && <Image source={profile.image} className="h-14 w-20" resizeMode="contain" />}
+          <View className="flex-1 gap-0.5">
+            <Text className="font-semibold">{device.nickname}</Text>
+            <Text variant="muted" className="text-xs">
+              {profile?.category ?? device.sku} · {device.sku}
+            </Text>
+          </View>
         </View>
         <Icon as={ChevronRight} size={18} className="text-muted-foreground" />
       </View>
@@ -70,7 +74,7 @@ function DeviceCard({ device }: { device: Device }) {
         </Text>
         {needsUpdate && (
           <View className="flex-row items-center gap-2">
-            <View className="rounded-full bg-destructive px-2 py-0.5">
+            <View className="rounded-full bg-destructive px-2 py-1">
               <Text className="text-xs text-destructive-foreground">업데이트 필요</Text>
             </View>
             <Button size="sm" onPress={() => {}}>

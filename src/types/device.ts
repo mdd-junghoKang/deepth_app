@@ -1,3 +1,5 @@
+import type { ImageSourcePropType } from 'react-native';
+
 // 기기가 지원하는 마사지 모드 하나를 나타내는 타입
 export type TherapyMode = {
   id: number; // 프로토콜의 therapy_mode 값(0xDF61)과 동일한 번호
@@ -10,6 +12,7 @@ export type TherapyMode = {
 export type DeviceProfile = {
   sku: string;
   category: string; // 화면에 표시할 제품 카테고리명 (예: "눈마사지기")
+  image: ImageSourcePropType; // 배경이 투명한 제품 사진
   modes: TherapyMode[];
   supportsHeat: boolean;
   temperatureRange?: { min: number; max: number }; // supportsHeat가 true일 때만 사용
@@ -35,6 +38,8 @@ export type Device = {
   batteryLevel: number; // 0~100
   isCharging: boolean;
   lastUsedAt: string | null; // ISO 날짜 문자열
+  lastUsedModeId: number | null; // 마지막으로 사용한 모드 (대시보드의 "최근 사용" 표시용)
+  lastUsedDurationMinutes: number | null;
 
   // 아래는 기기가 켜져 있을 때만 의미 있는 현재 동작 상태
   powerOn: boolean;

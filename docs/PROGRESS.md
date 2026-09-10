@@ -26,6 +26,23 @@
 | 최종 색상 코드 반영 | 레퍼런스 이미지(`image2.png`, `image3.png`)의 실제 픽셀 값을 추출해서 `global.css`, `tailwind.config.js`에 정확한 색상 코드로 반영, 번들링까지 재검증 | `UI_UX_DESIGN.md` 8번 |
 | 기기 프로필 데이터 구조 설계 | "기기 종류(SKU)가 지원하는 기능"(`DeviceProfile`)과 "실제 등록된 기기 한 대의 상태"(`Device`)를 분리한 타입을 정의하고, A2의 실제 프로토콜 값으로 카탈로그 작성 | `src/types/device.ts`, `src/services/ble/deviceProfiles.ts` |
 | 대시보드·디바이스 관리 화면 구현 | 하단 탭 내비게이션(홈/기기/설정)과 두 화면을 실제 컴포넌트로 구현. 아직 BLE 연동 전이라 Zustand 스토어에 목업 기기 데이터 2개를 넣어서 화면을 확인할 수 있게 함. `npx expo export`로 번들링(3,181개 모듈) 확인 | `src/navigation/RootNavigator.tsx`, `src/screens/`, `src/store/deviceStore.ts` |
+| EAS 빌드 진행 (안드로이드 앱 ID·키스토어 결정) | `eas init` 완료 후 `eas build` 진행 중 나온 결정: 앱 ID를 개인 계정 기반 자동 제안값 대신 `kr.mdd.deepthsmart`로 직접 지정, 키스토어는 Expo 서버가 관리하는 방식으로 새로 생성 | `SETUP.md` 2번 |
+| 실기기 첫 확인 후 UI 수정 | 실제 폰에 Dev Client를 설치해서 처음 확인한 결과를 반영: (1) 상단 상태바와 헤더가 겹치는 문제 해결(SafeAreaView 적용) (2) 추천 모드 카드를 텍스트만 있던 것에서 레퍼런스(`image3.png`)대로 아이콘 배지·재생 버튼·"전체보기" 링크가 있는 형태로 재구현 (3) 전체적으로 답답해 보이던 여백을 넓힘 (4) "기기" 탭 아이콘을 블루투스에서 안경(눈마사지기 연상) 아이콘으로 교체 (5) 헤더에 브랜드 서브타이틀과 인사말 추가 | `App.tsx`, `src/navigation/RootNavigator.tsx`, `src/screens/` |
+| 탭바 눌림 효과 개선 | 안드로이드 기본 회색 물결 효과 대신 브랜드 오렌지 색을 옅게 쓴 물결 효과로 교체 (반경도 아이콘 크기에 맞게 축소) | `src/navigation/RootNavigator.tsx` |
+| 대시보드를 `image3.png`와 세부까지 맞춤 | (1) 배터리를 스탯 줄에서 빼서 "연결됨" 옆으로 이동, 스탯 3개를 온도/현재모드/남은시간으로 변경 (2) 스탯 아이콘 색을 회색에서 브랜드 오렌지로 변경 (3) 추천 모드 아이콘의 불필요한 원형 배지 제거(재생 버튼에만 원형 유지) (4) 공지사항에도 추천모드처럼 "더보기" 링크 추가 | `src/screens/DashboardScreen.tsx` |
+| 설계 원칙에 체크리스트 추가 | "이 화면이 Deepth 제품처럼 보이는가" 등 5가지 확인 질문을 `UI_UX_DESIGN.md` 설계 원칙에 추가 | `UI_UX_DESIGN.md` 0번 |
+| 실제 제품 사진 반영 | 배경이 투명한 A2 제품 사진(`assets/deepth_device.png`)을 받아서, 여러 화면에서 재사용할 수 있도록 화면 코드가 아니라 `DeviceProfile`(기기 종류별 데이터)에 넣음. 대시보드 기기 카드와 디바이스 관리 목록 카드 둘 다에 적용 | `src/types/device.ts`, `src/services/ble/deviceProfiles.ts` |
+| 제품 사진 압축 | 2.1MB 원본을 화면에 실제로 필요한 크기(가로 640px)로 줄이고 PNG 압축을 적용해서 87KB로 축소 (투명 배경 유지, 화질 차이 없음 확인) | `assets/deepth_device.png` |
+| 실기기 두 번째 확인 후 수정 | (1) 지금은 기기 하나만 동시 연동되는 구조라 기기 전환 칩 UI 제거 (여러 기기 동시 연동을 지원하게 되면 다시 추가 예정) (2) "테라피 중지하기" 버튼에 재생(▶) 아이콘이 그대로 남아있던 오류 수정 — 켜져 있을 땐 정지(⏸) 아이콘으로 표시 | `src/screens/DashboardScreen.tsx` |
+| 헤더 알림/프로필 아이콘에 원형 배경 추가 | `image4.png` 레퍼런스처럼 흰색(카드색) 원형 배경 + 알림 점(빨간 점) 추가 | `src/screens/DashboardScreen.tsx` |
+| 재생/정지 아이콘 채우기(fill) 적용 | Lucide 아이콘이 기본적으로 테두리만 그려서(outline) 얇고 허전해 보이던 문제 — 재생 버튼들에 `fill="white"`를 추가해 속이 꽉 찬 아이콘으로 변경 | `src/screens/DashboardScreen.tsx` |
+| 배터리 막대 아이콘 직접 구현 | Lucide에는 수치만큼 막대가 채워지는 배터리 아이콘이 없어서, 배터리 %에 따라 안쪽 막대 너비가 바뀌는 커스텀 컴포넌트(`BatteryIndicator`)를 직접 만듦 (20% 이하면 빨간색으로 경고 표시) | `src/screens/DashboardScreen.tsx` |
+| "최근 사용" 정보 추가 | 기기 카드 안에 마지막 사용 시각·모드·사용 시간을 보여주는 줄 추가. `Device` 타입에 `lastUsedModeId`, `lastUsedDurationMinutes` 필드 추가 | `src/types/device.ts`, `src/store/deviceStore.ts`, `src/screens/DashboardScreen.tsx` |
+| 추천 모드 카드 레이아웃을 `image5.png`(최종본)에 맞춤 | (1) 가로 스크롤(2개만 보이고 3번째는 스와이프해야 보임) 대신 3개가 화면 너비에 꽉 차게 나오는 형태로 변경 (2) 카드 안 문구를 프로토콜의 긴 기술 설명 대신 짧은 홍보 문구(tagline)로 교체 (3) 아이콘/텍스트를 가운데 정렬로 변경 | `src/screens/DashboardScreen.tsx` |
+| **중요 범위 변경 확인: OTA는 A3 전용** | 고객사·개발사 미팅 결과, A2에는 OTA를 적용하지 않고 A3 기종에만 적용하기로 확정. A3 기판은 10월 말 이후 입고 예정이라 그 전까지 OTA는 보류. 기존 Nordic DFU 조사 내용은 A3 작업 시 재사용 예정이라 삭제하지 않고 남겨둠 | `docs/ble_ota_guide.md`, `AGENTS.md` 4번 |
+| "기기" 탭 아이콘을 자사 커스텀 아이콘으로 교체 | Lucide의 범용 안경 아이콘 대신, `assets/device_icon.svg`(자사 제품 실루엣)를 `react-native-svg`로 직접 컴포넌트화해서 적용. 원본이 얇은 윤곽선이라 테두리(stroke)를 추가했는데, 처음엔 큰 미리보기 이미지로만 확인해서 실제 탭바 크기(24px)에서는 여전히 너무 얇았음 — 실제 렌더링 크기로 다시 테스트해서 두께 값을 찾음 (600 → 너무 굵어서 400으로 최종 조정) | `src/components/icons/DeviceIcon.tsx`, `src/navigation/RootNavigator.tsx` |
+| **확정 사항 기록: "추천 모드"는 기기 접속 화면에서만 표출** | 고객사·개발사 미팅 결과, 추천 모드는 기기가 연결된 화면에서만 보여주기로 확정. 지금 구현(기기가 선택돼 있을 때만 대시보드에 추천 모드가 보이는 구조)이 이미 이 방침과 일치함을 확인 | `src/screens/DashboardScreen.tsx` |
+| CS 채팅(깃플챗) 연동 가이드 문서 작성 | 공식 RN SDK(`react-native-gitple-sdk`, 2021년 12월 이후 업데이트 없음 — npm에서 실제 확인)는 안 쓰고, `react-native-webview`로 Gitple 웹 위젯을 감싸는 방식으로 결정. 실제 설정값은 관리자 콘솔에서 받아야 해서 예시 코드는 가짜 값으로 표시 | `docs/gitple_chat_guide.md` |
 
 ## src 폴더 구조
 
@@ -55,7 +72,7 @@
 |---|---|
 | 1 | 기기 등록(BLE 스캔) 흐름 화면 구현 — 지금은 "새로운 기기 등록" 버튼이 눌러도 아무 동작 안 함 |
 | 2 | `SETUP.md`에 남은 EAS 로그인·빌드 진행 (사람이 직접, 다른 항목과 순서 무관하게 진행 가능 — `eas init`까지는 진행된 것으로 보임) |
-| 3 | 실기기로 BLE 연결 및 펌웨어 업데이트 테스트 (목업 데이터를 실제 BLE 데이터로 교체) |
+| 3 | 실기기로 BLE 연결 테스트 (목업 데이터를 실제 BLE 데이터로 교체). **펌웨어 업데이트(OTA) 테스트는 제외** — A2는 OTA 대상이 아니고, A3는 기판이 10월 말 이후 입고돼야 진행 가능 |
 | 4 | 실제 출시 전, 안드로이드용 adaptive icon(전경/배경 이미지)을 새로 준비해서 `app.json`에 다시 등록 (기존 기본 아이콘 파일은 안 쓰기로 하고 삭제함) |
 
 ## NativeWind / react-native-reusables 세팅 경위 (참고용)
