@@ -21,6 +21,9 @@
 | 디자인 방향 최종 확정 | "따뜻한 크림 톤" vs "다크+민트 프리미엄 테크" 두 방향을 비교 검토한 뒤, 브랜드 성격(정밀 트래킹보다 셀프케어에 가까움)에 맞춰 크림 톤으로 확정. 버튼 색 불일치·이벤트 배너 톤 문제도 반영된 최신 레퍼런스(`image2.png`, `image3.png`)로 정리 | `UI_UX_DESIGN.md` 8번 |
 | 코딩 컨벤션·기술 스택 확정 | 내비게이션(React Navigation), 상태관리(Zustand), UI 키트(NativeWind + react-native-reusables 선택적 사용), BLE 폴더 구조, OTA 안전장치 정책(재연결/백그라운드 처리)을 확정하고 `AGENTS.md`에 정리 | `AGENTS.md` |
 | React Navigation·Zustand 설치 | `@react-navigation/native`, `native-stack`, `bottom-tabs`와 필수 의존성(`react-native-screens`, `react-native-safe-area-context`), `zustand` 설치 완료 | `package.json` |
+| NativeWind/react-native-reusables 실제 세팅 및 검증 | 설정 파일을 수동 구성하고, 누락됐던 필수 의존성(`babel-preset-expo`, `react-native-reanimated`, `react-native-worklets`)을 찾아 설치, 실제 번들링까지 확인 | `PROGRESS.md`(이 문서) |
+| 문서 폴더 정리 | `AGENTS.md`/`CLAUDE.md`만 루트에 남기고 나머지 문서 5개를 `docs/`로 이동 | `AGENTS.md` |
+| 최종 색상 코드 반영 | 레퍼런스 이미지(`image2.png`, `image3.png`)의 실제 픽셀 값을 추출해서 `global.css`, `tailwind.config.js`에 정확한 색상 코드로 반영, 번들링까지 재검증 | `UI_UX_DESIGN.md` 8번 |
 
 ## src 폴더 구조
 
@@ -47,12 +50,11 @@
 
 | 순서 | 할 일 |
 |---|---|
-| 1 | 레퍼런스 이미지(`image2.png`, `image3.png`)에서 정확한 색상 코드를 뽑아 `global.css`의 색상 변수 값 교체 |
-| 2 | `UI_UX_DESIGN.md`에서 정한 기기 프로필 데이터 구조부터 설계 (A2/A3 등 기기 종류별 제어 항목을 데이터로 관리하기 위함) |
-| 3 | `src/screens`, `src/navigation`에 대시보드 → 디바이스 관리 → 기기 등록 화면과 이동 구조 구현 |
-| 4 | `SETUP.md`에 남은 EAS 로그인·빌드 진행 (사람이 직접) |
-| 5 | 실기기로 BLE 연결 및 펌웨어 업데이트 테스트 |
-| 6 | 실제 출시 전, 안드로이드용 adaptive icon(전경/배경 이미지)을 새로 준비해서 `app.json`에 다시 등록 (기존 기본 아이콘 파일은 안 쓰기로 하고 삭제함) |
+| 1 | `UI_UX_DESIGN.md`에서 정한 기기 프로필 데이터 구조부터 설계 (A2/A3 등 기기 종류별 제어 항목을 데이터로 관리하기 위함) |
+| 2 | `src/screens`, `src/navigation`에 대시보드 → 디바이스 관리 → 기기 등록 화면과 이동 구조 구현 |
+| 3 | `SETUP.md`에 남은 EAS 로그인·빌드 진행 (사람이 직접, 다른 항목과 순서 무관하게 진행 가능) |
+| 4 | 실기기로 BLE 연결 및 펌웨어 업데이트 테스트 |
+| 5 | 실제 출시 전, 안드로이드용 adaptive icon(전경/배경 이미지)을 새로 준비해서 `app.json`에 다시 등록 (기존 기본 아이콘 파일은 안 쓰기로 하고 삭제함) |
 
 ## NativeWind / react-native-reusables 세팅 경위 (참고용)
 
