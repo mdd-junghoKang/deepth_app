@@ -12,6 +12,9 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 - 기술 스택: Expo(~57) + React Native(0.86) + TypeScript, 내비게이션은 React Navigation, 상태관리는 Zustand
 - BLE 통신: `react-native-ble-plx` / OTA는 `@getquip/expo-nordic-dfu` (Nordic 공식 Secure DFU 라이브러리를 감싼 Expo 모듈)
 - UI: NativeWind(Tailwind) 기반 스타일링 + `react-native-reusables`에서 표준 컴포넌트(버튼/인풋/모달 등)를 필요할 때마다 선택적으로 가져오고, 앱 전용 화면/위젯은 직접 컴포넌트로 작성
+  - **주의**: 컴포넌트를 추가할 때는 `npx @react-native-reusables/cli@latest add [이름]`만 사용할 것. `init` 명령어는 기존 프로젝트에 설정을 추가하는 게 아니라 완전히 새 프로젝트를 만들어버리므로 다시 실행하지 말 것 (자세한 경위는 `docs/PROGRESS.md` 참고). 설정 파일(`tailwind.config.js`, `global.css`, `components.json` 등)은 이미 수동으로 구성 완료된 상태.
+  - `react-native-reanimated`/`react-native-worklets`는 애니메이션을 안 써도 NativeWind 스타일링 엔진이 무조건 요구하는 필수 의존성이라 이미 설치돼 있음. 지우지 말 것.
+- **세팅 관련 작업(라이브러리 설치, 설정 파일 변경 등)을 했으면 `npx tsc --noEmit`만으로 끝났다고 하지 말 것.** 타입체크는 통과해도 실제 번들링(`npx expo export -p android`)에서 실패하는 경우가 있으니, 설정을 바꾼 뒤에는 번들링까지 확인할 것.
 
 ## 2. 코드 스타일 원칙 (가장 중요)
 
@@ -32,13 +35,13 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 
 ## 4. BLE / OTA 관련 참고사항
 
-- BLE 통신 관련 UUID, 명령어 스펙은 `ble_ota_guide.md`(정리된 가이드)와 `deepth_info/20240125_Protocol.xlsx`(하드웨어팀 원본 문서)를 그대로 따릅니다. 임의로 값을 바꾸지 마세요.
+- BLE 통신 관련 UUID, 명령어 스펙은 `docs/ble_ota_guide.md`(정리된 가이드)와 `deepth_info/20240125_Protocol.xlsx`(하드웨어팀 원본 문서)를 그대로 따릅니다. 임의로 값을 바꾸지 마세요.
 - 칩셋: Nordic 계열이라고 확인은 됐지만(대표 구두 확인), 실제 회로의 "B-3700" 모듈이 Nordic이 맞는지는 문서로 검증되지 않았습니다. 이 부분이 확정되기 전까지는 "Nordic이라고 가정하고 진행 중"이라는 점을 감안하세요.
 - OTA 라이브러리: `@getquip/expo-nordic-dfu`. `expo`의 공식 지원 버전(peer dependency)이 이 프로젝트보다 낮아 `--legacy-peer-deps`로 설치돼 있습니다 (`.npmrc` 참고). 실기기 검증 전까지는 완전히 신뢰하지 마세요.
 
 ## 5. BLE 권한 처리 (필수, 빼먹기 쉬운 부분)
 
-- **안드로이드**: API 31(안드로이드 12) 이상은 `BLUETOOTH_SCAN`, `BLUETOOTH_CONNECT` 런타임 권한을 앱에서 직접 요청해야 BLE 스캔/연결이 됩니다. API 30 이하는 위치 권한(`ACCESS_FINE_LOCATION`)이 있어야 스캔 결과가 나옵니다. `AndroidManifest.xml`에 권한 선언 + 런타임 요청 코드 둘 다 있어야 합니다. (권한 선언 자체는 `app.json`의 `react-native-ble-plx` 플러그인과 `android.permissions`에 이미 반영돼 있습니다 — `SETUP.md` 4번 참고. 런타임 요청 코드는 아직 구현 전입니다.)
+- **안드로이드**: API 31(안드로이드 12) 이상은 `BLUETOOTH_SCAN`, `BLUETOOTH_CONNECT` 런타임 권한을 앱에서 직접 요청해야 BLE 스캔/연결이 됩니다. API 30 이하는 위치 권한(`ACCESS_FINE_LOCATION`)이 있어야 스캔 결과가 나옵니다. `AndroidManifest.xml`에 권한 선언 + 런타임 요청 코드 둘 다 있어야 합니다. (권한 선언 자체는 `app.json`의 `react-native-ble-plx` 플러그인과 `android.permissions`에 이미 반영돼 있습니다 — `docs/SETUP.md` 4번 참고. 런타임 요청 코드는 아직 구현 전입니다.)
 - **iOS**: `Info.plist`에 블루투스 사용 설명 문구가 없으면 스캔 자체가 안 되고, 앱스토어 심사에서도 거절됩니다. (이것도 `app.json`에 이미 반영돼 있습니다.)
 - 권한이 없어서 생기는 문제는 에러 메시지 없이 "스캔했는데 기기가 안 뜬다"처럼 조용히 실패하는 경우가 많으니, BLE 관련 버그가 생기면 권한부터 확인하세요.
 
@@ -69,7 +72,7 @@ src/
 npm install
 npx expo start --dev-client   # 주의: 일반 "npx expo start"로 열면 Expo Go로 연결을 시도하는데,
                                # 이 앱은 커스텀 네이티브 모듈(BLE, OTA)이 있어서 Expo Go로는 실행이 안 됩니다.
-                               # 반드시 Dev Client 앱으로 실행해야 합니다 (SETUP.md 1~2번 참고).
+                               # 반드시 Dev Client 앱으로 실행해야 합니다 (docs/SETUP.md 1~2번 참고).
 
 # Dev Client 앱 자체를 새로 빌드해야 할 때 (네이티브 모듈을 추가/변경했을 때만)
 npx eas build --profile development --platform android
@@ -77,7 +80,7 @@ npx eas build --profile development --platform android
 
 ## 9. 커밋 컨벤션
 
-**결론: 커밋 메시지는 `접두사: 한글 설명` 형식으로 쓰고, 접두사는 아래 표 기준으로 고릅니다.**
+**결론: 커밋 메시지는 `접두사: 한글 설명` 형식으로 쓰고, 접두사는 아래 표 기준으로 고릅니다.** (이 형식은 Conventional Commits라는 업계 표준 규칙입니다.)
 
 | 접두사 | 언제 쓰나 |
 |---|---|
@@ -87,6 +90,8 @@ npx eas build --profile development --platform android
 | `chore` | 프로젝트 초기 세팅, 패키지 설치, 설정 파일 변경처럼 "기능"이라고 부르기 애매한 잡다한 작업 |
 
 예: `chore: React Navigation·Zustand 설치`, `feat: 대시보드 화면 구현`
+
+**커밋 타이밍**: 먼저 알아서 커밋하지 말 것. 의미 있는 변경이 쌓여서 커밋이 필요해 보이면, 그냥 진행하지 말고 사용자에게 "지금 커밋할까요?"라고 먼저 물어볼 것.
 
 ---
 
@@ -102,4 +107,4 @@ npx eas build --profile development --platform android
 
 # 화면/기능 설계 시 원칙
 
-사용자가 요청한 화면 구성이나 기능 명세라도, UX·기술적으로 더 나은 방법이 있다고 판단되면 그대로 따르지 말고 대안을 제안할 것. 요구사항을 기계적으로 배치하는 것보다 실제 사용성이 우선이다. 그래도 사용자가 원래 스펙대로 하자고 하면 그걸로 간다. 배경과 판단 예시는 `UI_UX_DESIGN.md`의 "설계 원칙" 섹션 참고.
+사용자가 요청한 화면 구성이나 기능 명세라도, UX·기술적으로 더 나은 방법이 있다고 판단되면 그대로 따르지 말고 대안을 제안할 것. 요구사항을 기계적으로 배치하는 것보다 실제 사용성이 우선이다. 그래도 사용자가 원래 스펙대로 하자고 하면 그걸로 간다. 배경과 판단 예시는 `docs/UI_UX_DESIGN.md`의 "설계 원칙" 섹션 참고.

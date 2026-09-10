@@ -47,23 +47,43 @@
 
 | 순서 | 할 일 |
 |---|---|
-| 1 | `npx @react-native-reusables/cli@latest init` 실행 (대화형 마법사라 사람이 직접 — 아래 "지금 사람이 해야 하는 것" 참고) |
+| 1 | 레퍼런스 이미지(`image2.png`, `image3.png`)에서 정확한 색상 코드를 뽑아 `global.css`의 색상 변수 값 교체 |
 | 2 | `UI_UX_DESIGN.md`에서 정한 기기 프로필 데이터 구조부터 설계 (A2/A3 등 기기 종류별 제어 항목을 데이터로 관리하기 위함) |
 | 3 | `src/screens`, `src/navigation`에 대시보드 → 디바이스 관리 → 기기 등록 화면과 이동 구조 구현 |
 | 4 | `SETUP.md`에 남은 EAS 로그인·빌드 진행 (사람이 직접) |
 | 5 | 실기기로 BLE 연결 및 펌웨어 업데이트 테스트 |
 | 6 | 실제 출시 전, 안드로이드용 adaptive icon(전경/배경 이미지)을 새로 준비해서 `app.json`에 다시 등록 (기존 기본 아이콘 파일은 안 쓰기로 하고 삭제함) |
 
-## 지금 사람이 해야 하는 것
+## NativeWind / react-native-reusables 세팅 경위 (참고용)
 
-`react-native-reusables`를 세팅하는 명령어는 방향키로 선택하는 대화형 마법사라 AI가 대신 실행할 수 없습니다. 아래 순서로 직접 진행해주세요.
+**결론: `npx @react-native-reusables/cli@latest init` 명령어는 기존 프로젝트에 설정을 추가해주는 게 아니라, 완전히 새로운 프로젝트를 처음부터 만드는 명령어였습니다.** "A project already exists" 경고에서 "Initialize a new project here anyway"를 선택했더니, 우리 프로젝트 폴더 안에 `deepth_app`이라는 별도의 새 프로젝트(Expo Router 구조, 자체 `node_modules` 포함)를 통째로 새로 만들어버렸습니다. 이건 저희가 원했던 방식(React Navigation 유지, 기존 BLE/OTA 세팅 유지)과 맞지 않아서, 그 폴더는 삭제했습니다.
+
+대신 그 폴더 안에 생성됐던 설정 파일들(`tailwind.config.js`, `babel.config.js`, `metro.config.js`, `global.css`, `components.json` 등)을 참고해서, 우리 프로젝트 루트에 **직접 맞게 옮겨서 설정**했습니다. `npx tsc --noEmit`으로 타입 에러 없이 컴파일되는 것까지 확인했고, `npx @react-native-reusables/cli@latest add input` 명령어로 컴포넌트를 하나 추가해봤더니 `src/components/ui/input.tsx`에 정확히 잘 들어가는 것도 확인했습니다.
+
+**앞으로 컴포넌트가 더 필요하면**: `init`은 다시 실행하지 말고, `add` 명령어만 사용하면 됩니다.
 
 ```bash
-npx @react-native-reusables/cli@latest init
+npx @react-native-reusables/cli@latest add [컴포넌트이름]
+# 예: npx @react-native-reusables/cli@latest add dialog
 ```
 
-- "A project already exists in this directory" 안내가 뜨면 **"Initialize a new project here anyway"** 선택
-- 스타일링 라이브러리를 고르라고 하면 **NativeWind** 선택
-- 나머지는 기본값(자동 추천)으로 진행하면 됩니다
+### 타입체크만으로는 부족했던 이유
 
-다 끝나면 저한테 "끝났다"고 알려주시면, 생성된 설정 파일들을 확인하고 나머지 화면 작업에 이어서 반영하겠습니다.
+**결론: `tsc` 타입체크가 통과해도 실제로 앱이 번들링되는지는 별개로 확인해야 했습니다.** `npx expo export -p android`로 실제 번들링을 시도해보니 아래 두 가지가 빠져서 실패했습니다.
+
+| 빠졌던 것 | 왜 필요한가 |
+|---|---|
+| `babel-preset-expo` | 원래 Expo가 내부적으로만 쓰던 걸, `babel.config.js`를 직접 만들면서 우리 프로젝트에도 직접 설치해야 하는 상태가 됨 |
+| `react-native-reanimated`, `react-native-worklets` | 애니메이션을 안 써도, NativeWind의 스타일링 엔진(`react-native-css-interop`)이 무조건 요구하는 필수 의존성이었음 (선택 아님) |
+
+이 두 개를 설치한 뒤 `npx expo export -p android`가 979개 모듈을 정상적으로 번들링하는 것까지 확인해서, 이제 진짜로 세팅이 끝났다고 볼 수 있습니다.
+
+## 지금까지 세팅된 것
+
+| 파일 | 역할 |
+|---|---|
+| `tailwind.config.js`, `global.css` | Tailwind/NativeWind 색상·스타일 테마 (지금은 기본 회색조, 실제 색상 코드는 다음 단계에서 반영 예정) |
+| `babel.config.js`, `metro.config.js` | NativeWind가 동작하도록 빌드 설정 연결 |
+| `components.json` | `react-native-reusables` 컴포넌트를 어디에 넣을지 정하는 설정 (`@/` → `src/`로 연결) |
+| `src/lib/utils.ts` | 스타일 클래스를 합쳐주는 `cn()` 함수 |
+| `src/components/ui/{button,text,icon,input}.tsx` | 가져온 표준 컴포넌트 4개 |
